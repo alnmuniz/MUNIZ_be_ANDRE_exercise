@@ -6,6 +6,8 @@ import com.ecore.roles.model.Membership;
 import com.ecore.roles.repository.MembershipRepository;
 import com.ecore.roles.repository.RoleRepository;
 import com.ecore.roles.service.impl.MembershipsServiceImpl;
+import com.ecore.roles.utils.TestData;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -40,17 +42,22 @@ class MembershipsServiceTest {
 
     @Test
     public void shouldCreateMembership() {
-        Membership expectedMembership = DEFAULT_MEMBERSHIP();
-        when(roleRepository.findById(expectedMembership.getRole().getId()))
+        Membership nemMembershipToCreate = TestData.NEW_MEMBERSHIP(false);
+        Membership expectedMembership = TestData.NEW_MEMBERSHIP(true);
+
+        when(roleRepository.findById(nemMembershipToCreate.getRole().getId()))
                 .thenReturn(Optional.ofNullable(DEVELOPER_ROLE()));
-        when(membershipRepository.findByUserIdAndTeamId(expectedMembership.getUserId(),
-                expectedMembership.getTeamId()))
+        when(membershipRepository.findByUserIdAndTeamId(nemMembershipToCreate.getUserId(),
+                nemMembershipToCreate.getTeamId()))
                         .thenReturn(Optional.empty());
         when(membershipRepository
-                .save(expectedMembership))
+                .save(nemMembershipToCreate))
                         .thenReturn(expectedMembership);
+        when(teamsService.isMemberOfTeam(nemMembershipToCreate.getTeamId(),
+                nemMembershipToCreate.getUserId()))
+                        .thenReturn(true);
 
-        Membership actualMembership = membershipsService.assignRoleToMembership(expectedMembership);
+        Membership actualMembership = membershipsService.assignRoleToMembership(nemMembershipToCreate);
 
         assertNotNull(actualMembership);
         assertEquals(actualMembership, expectedMembership);

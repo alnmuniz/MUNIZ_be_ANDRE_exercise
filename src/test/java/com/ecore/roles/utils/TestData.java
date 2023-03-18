@@ -100,4 +100,16 @@ public class TestData {
                 .build();
     }
 
+    public static Membership NEW_MEMBERSHIP(boolean buildWithId) {
+        Membership m = Membership.builder()
+                .role(DEVELOPER_ROLE())
+                .userId(UUID_3)
+                .teamId(ORDINARY_CORAL_LYNX_TEAM_UUID)
+                .build();
+        if (buildWithId) {
+            m.setId(DEFAULT_MEMBERSHIP_UUID);
+        }
+        return m;
+    }
+
 }
