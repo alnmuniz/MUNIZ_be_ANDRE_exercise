@@ -17,15 +17,14 @@ import static com.ecore.roles.web.dto.RoleDto.fromModel;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/v1/roles")
+@RequestMapping(value = "/v1/roles", produces = {"application/json"})
 public class RolesRestController implements RolesApi {
 
     private final RolesService rolesService;
 
     @Override
     @PostMapping(
-            consumes = {"application/json"},
-            produces = {"application/json"})
+            consumes = {"application/json"})
     public ResponseEntity<RoleDto> createRole(
             @Valid @RequestBody RoleDto role) {
         return ResponseEntity
@@ -34,8 +33,7 @@ public class RolesRestController implements RolesApi {
     }
 
     @Override
-    @PostMapping(
-            produces = {"application/json"})
+    @GetMapping()
     public ResponseEntity<List<RoleDto>> getRoles() {
 
         List<Role> getRoles = rolesService.getRoles();
@@ -53,9 +51,8 @@ public class RolesRestController implements RolesApi {
     }
 
     @Override
-    @PostMapping(
-            path = "/{roleId}",
-            produces = {"application/json"})
+    @GetMapping(
+            path = "/{roleId}")
     public ResponseEntity<RoleDto> getRole(
             @PathVariable UUID roleId) {
         return ResponseEntity
