@@ -11,6 +11,7 @@ import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 import org.hamcrest.Matchers;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -19,6 +20,11 @@ import static io.restassured.RestAssured.when;
 import static io.restassured.http.ContentType.JSON;
 
 public class RestAssuredHelper {
+
+    public static final int HTTP_BAD_REQUEST = HttpStatus.BAD_REQUEST.value();
+    public static final int HTTP_NOT_FOUND = HttpStatus.NOT_FOUND.value();
+    public static final int HTTP_CREATED = HttpStatus.CREATED.value();
+    public static final int HTTP_OK = HttpStatus.OK.value();
 
     public static void setUp(int port) {
         RestAssured.reset();
