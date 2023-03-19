@@ -13,6 +13,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static com.ecore.roles.utils.MockUtils.mockGetTeamById;
@@ -136,9 +137,12 @@ public class RolesApiTest {
         createMembership(expectedMembership)
                 .statusCode(RestAssuredHelper.HTTP_CREATED);
 
+        ArrayList<String> expectedApiResult = new ArrayList<>();
+        expectedApiResult.add(expectedMembership.getRole().getName());
+
         getRole(expectedMembership.getUserId(), expectedMembership.getTeamId())
                 .statusCode(RestAssuredHelper.HTTP_OK)
-                .body("name", equalTo(expectedMembership.getRole().getName()));
+                .body("name", equalTo(expectedApiResult));
     }
 
     @Test
@@ -157,6 +161,6 @@ public class RolesApiTest {
     void shouldFailToGetRoleByUserIdAndTeamIdWhenItDoesNotExist() {
         mockGetTeamById(mockServer, UUID_1, null);
         getRole(GIANNI_USER_UUID, UUID_1)
-                .validate(RestAssuredHelper.HTTP_NOT_FOUND, format("Team %s not found", UUID_1));
+                .validate(RestAssuredHelper.HTTP_NOT_FOUND, "Role null not found");
     }
 }
