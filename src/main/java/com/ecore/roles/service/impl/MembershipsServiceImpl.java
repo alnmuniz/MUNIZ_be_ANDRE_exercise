@@ -44,7 +44,7 @@ public class MembershipsServiceImpl implements MembershipsService {
         UUID roleId = ofNullable(m.getRole()).map(Role::getId)
                 .orElseThrow(() -> new InvalidArgumentException(Role.class));
 
-        if (membershipRepository.findByUserIdAndTeamId(m.getUserId(), m.getTeamId())
+        if (membershipRepository.findByRoleIdAndUserIdAndTeamId(roleId, m.getUserId(), m.getTeamId())
                 .isPresent()) {
             throw new ResourceExistsException(Membership.class);
         }

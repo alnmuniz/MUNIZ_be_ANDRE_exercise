@@ -42,22 +42,23 @@ class MembershipsServiceTest {
 
     @Test
     public void shouldCreateMembership() {
-        Membership nemMembershipToCreate = TestData.NEW_MEMBERSHIP(false);
+        Membership newMembershipToCreate = TestData.NEW_MEMBERSHIP(false);
         Membership expectedMembership = TestData.NEW_MEMBERSHIP(true);
 
-        when(roleRepository.findById(nemMembershipToCreate.getRole().getId()))
+        when(roleRepository.findById(newMembershipToCreate.getRole().getId()))
                 .thenReturn(Optional.ofNullable(DEVELOPER_ROLE()));
-        when(membershipRepository.findByUserIdAndTeamId(nemMembershipToCreate.getUserId(),
-                nemMembershipToCreate.getTeamId()))
+        when(membershipRepository.findByRoleIdAndUserIdAndTeamId(newMembershipToCreate.getRole().getId(),
+                newMembershipToCreate.getUserId(),
+                newMembershipToCreate.getTeamId()))
                         .thenReturn(Optional.empty());
         when(membershipRepository
-                .save(nemMembershipToCreate))
+                .save(newMembershipToCreate))
                         .thenReturn(expectedMembership);
-        when(teamsService.isMemberOfTeam(nemMembershipToCreate.getTeamId(),
-                nemMembershipToCreate.getUserId()))
+        when(teamsService.isMemberOfTeam(newMembershipToCreate.getTeamId(),
+                newMembershipToCreate.getUserId()))
                         .thenReturn(true);
 
-        Membership actualMembership = membershipsService.assignRoleToMembership(nemMembershipToCreate);
+        Membership actualMembership = membershipsService.assignRoleToMembership(newMembershipToCreate);
 
         assertNotNull(actualMembership);
         assertEquals(actualMembership, expectedMembership);
@@ -73,7 +74,8 @@ class MembershipsServiceTest {
     @Test
     public void shouldFailToCreateMembershipWhenItExists() {
         Membership expectedMembership = DEFAULT_MEMBERSHIP();
-        when(membershipRepository.findByUserIdAndTeamId(expectedMembership.getUserId(),
+        when(membershipRepository.findByRoleIdAndUserIdAndTeamId(expectedMembership.getRole().getId(),
+                expectedMembership.getUserId(),
                 expectedMembership.getTeamId()))
                         .thenReturn(Optional.of(expectedMembership));
 
