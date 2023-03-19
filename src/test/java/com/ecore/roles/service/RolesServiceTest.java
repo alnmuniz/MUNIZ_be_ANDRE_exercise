@@ -1,16 +1,22 @@
 package com.ecore.roles.service;
 
 import com.ecore.roles.exception.ResourceNotFoundException;
+import com.ecore.roles.model.Membership;
 import com.ecore.roles.model.Role;
 import com.ecore.roles.repository.MembershipRepository;
 import com.ecore.roles.repository.RoleRepository;
 import com.ecore.roles.service.impl.RolesServiceImpl;
+import com.ecore.roles.utils.TestData;
+import com.ecore.roles.web.dto.RoleDto;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.ecore.roles.utils.TestData.DEVELOPER_ROLE;
@@ -70,5 +76,67 @@ class RolesServiceTest {
                 () -> rolesService.getRole(UUID_1));
 
         assertEquals(format("Role %s not found", UUID_1), exception.getMessage());
+    }
+
+    @Test
+    public void shouldGetRoleByUserIdAndTeamIdWhenExists() {
+        Membership gianniDeveloper = TestData.DEFAULT_MEMBERSHIP();
+        List<Membership> memberships = new ArrayList<Membership>();
+        memberships.add(gianniDeveloper);
+
+        when(membershipRepository.findByUserIdAndTeamId(
+                gianniDeveloper.getUserId(),
+                gianniDeveloper.getTeamId()))
+                        .thenReturn(memberships);
+
+        List<RoleDto> returnedRoles =
+                rolesService.getRoles(
+                        gianniDeveloper.getUserId(),
+                        gianniDeveloper.getTeamId());
+
+        assertNotNull(returnedRoles);
+        assertEquals(returnedRoles.get(0).getName(), gianniDeveloper.getRole().getName());
+    }
+
+    @Test
+    public void shouldGetMoreThanOneRoleByUserIdAndTeamIdWhenExists() {
+        Membership gianniDeveloper = TestData.DEFAULT_MEMBERSHIP();
+        Membership gianniTester = TestData.GIANNI_TESTER_MEMBERSHIP();
+        List<Membership> memberships = new ArrayList<Membership>();
+        memberships.add(gianniDeveloper);
+        memberships.add(gianniTester);
+
+        when(membershipRepository.findByUserIdAndTeamId(
+                gianniDeveloper.getUserId(),
+                gianniDeveloper.getTeamId()))
+                        .thenReturn(memberships);
+
+        List<RoleDto> returnedRoles =
+                rolesService.getRoles(
+                        gianniDeveloper.getUserId(),
+                        gianniDeveloper.getTeamId());
+
+        assertNotNull(returnedRoles);
+        assertEquals(returnedRoles.size(), 2);
+        assertEquals(returnedRoles.get(0).getName(), gianniDeveloper.getRole().getName());
+        assertEquals(returnedRoles.get(1).getName(), gianniTester.getRole().getName());
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenUserDoesNotHaveRoleInATeam() {
+        List<Membership> memberships = new ArrayList<Membership>();
+
+        when(membershipRepository.findByUserIdAndTeamId(
+                TestData.GIANNI_USER_UUID,
+                TestData.ORDINARY_CORAL_LYNX_TEAM_UUID))
+                        .thenReturn(memberships);
+
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> rolesService.getRoles(
+                        TestData.GIANNI_USER_UUID,
+                        TestData.ORDINARY_CORAL_LYNX_TEAM_UUID));
+
+        assertEquals("Role null not found", exception.getMessage());
     }
 }

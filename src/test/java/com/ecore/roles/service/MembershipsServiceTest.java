@@ -74,7 +74,8 @@ class MembershipsServiceTest {
     @Test
     public void shouldFailToCreateMembershipWhenItExists() {
         Membership expectedMembership = DEFAULT_MEMBERSHIP();
-        when(membershipRepository.findByRoleIdAndUserIdAndTeamId(expectedMembership.getRole().getId(),
+        when(membershipRepository.findByRoleIdAndUserIdAndTeamId(
+                expectedMembership.getRole().getId(),
                 expectedMembership.getUserId(),
                 expectedMembership.getTeamId()))
                         .thenReturn(Optional.of(expectedMembership));

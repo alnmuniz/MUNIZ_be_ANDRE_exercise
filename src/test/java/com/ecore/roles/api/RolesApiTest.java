@@ -23,6 +23,7 @@ import static com.ecore.roles.utils.RestAssuredHelper.getRole;
 import static com.ecore.roles.utils.RestAssuredHelper.getRoles;
 import static com.ecore.roles.utils.RestAssuredHelper.sendRequest;
 import static com.ecore.roles.utils.TestData.DEFAULT_MEMBERSHIP;
+import static com.ecore.roles.utils.TestData.GIANNI_TESTER_MEMBERSHIP;
 import static com.ecore.roles.utils.TestData.DEVELOPER_ROLE;
 import static com.ecore.roles.utils.TestData.DEVOPS_ROLE;
 import static com.ecore.roles.utils.TestData.GIANNI_USER_UUID;
@@ -141,6 +142,29 @@ public class RolesApiTest {
         expectedApiResult.add(expectedMembership.getRole().getName());
 
         getRole(expectedMembership.getUserId(), expectedMembership.getTeamId())
+                .statusCode(RestAssuredHelper.HTTP_OK)
+                .body("name", equalTo(expectedApiResult));
+    }
+
+    @Test
+    void shouldGetMoreThanOneRoleByUserIdAndTeamId() {
+        Membership expectedMembershipGianniTester = GIANNI_TESTER_MEMBERSHIP();
+
+        mockGetTeamById(mockServer, ORDINARY_CORAL_LYNX_TEAM_UUID, ORDINARY_CORAL_LYNX_TEAM());
+
+        createMembership(expectedMembershipGianniTester)
+                .statusCode(RestAssuredHelper.HTTP_CREATED);
+
+        ArrayList<String> expectedApiResult = new ArrayList<>();
+
+        /*
+         * Developer role should be inserted by previous test shouldGetRoleByUserIdAndTeamId
+         */
+        expectedApiResult.add(DEVELOPER_ROLE().getName());
+
+        expectedApiResult.add(expectedMembershipGianniTester.getRole().getName());
+
+        getRole(expectedMembershipGianniTester.getUserId(), expectedMembershipGianniTester.getTeamId())
                 .statusCode(RestAssuredHelper.HTTP_OK)
                 .body("name", equalTo(expectedApiResult));
     }
