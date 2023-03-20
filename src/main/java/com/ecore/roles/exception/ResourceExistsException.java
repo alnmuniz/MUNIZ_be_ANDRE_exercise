@@ -1,7 +1,7 @@
 package com.ecore.roles.exception;
 
+import static com.ecore.roles.utils.MessageUtil.S_ALREADY_EXISTS;
 import static java.lang.String.format;
-import static com.ecore.roles.MessageUtil.S_ALREADY_EXISTS;
 
 public class ResourceExistsException extends RuntimeException {
 

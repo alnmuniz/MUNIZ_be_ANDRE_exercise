@@ -1,5 +1,10 @@
 package com.ecore.roles.api;
 
+import static com.ecore.roles.utils.MessageUtil.BAD_REQUEST;
+import static com.ecore.roles.utils.MessageUtil.INVALID_S_OBJECT;
+import static com.ecore.roles.utils.MessageUtil.PROV_USR_DOESNT_BELONG_PROV_TEAM;
+import static com.ecore.roles.utils.MessageUtil.S_ALREADY_EXISTS;
+import static com.ecore.roles.utils.MessageUtil.S_S_NOT_FOUND;
 import static com.ecore.roles.utils.MockUtils.mockGetTeamById;
 import static com.ecore.roles.utils.RestAssuredHelper.createMembership;
 import static com.ecore.roles.utils.RestAssuredHelper.getMemberships;
@@ -25,12 +30,6 @@ import com.ecore.roles.model.Role;
 import com.ecore.roles.repository.MembershipRepository;
 import com.ecore.roles.utils.RestAssuredHelper;
 import com.ecore.roles.web.dto.MembershipDto;
-
-import static com.ecore.roles.MessageUtil.S_ALREADY_EXISTS;
-import static com.ecore.roles.MessageUtil.S_S_NOT_FOUND;
-import static com.ecore.roles.MessageUtil.INVALID_S_OBJECT;
-import static com.ecore.roles.MessageUtil.PROV_USR_DOESNT_BELONG_PROV_TEAM;
-import static com.ecore.roles.MessageUtil.BAD_REQUEST;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MembershipsApiTests {

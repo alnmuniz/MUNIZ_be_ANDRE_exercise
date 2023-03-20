@@ -1,7 +1,7 @@
 package com.ecore.roles.service;
 
-import static com.ecore.roles.MessageUtil.S_ALREADY_EXISTS;
-import static com.ecore.roles.MessageUtil.INVALID_S_OBJECT;
+import static com.ecore.roles.utils.MessageUtil.INVALID_S_OBJECT;
+import static com.ecore.roles.utils.MessageUtil.S_ALREADY_EXISTS;
 import static com.ecore.roles.utils.TestData.DEFAULT_MEMBERSHIP;
 import static com.ecore.roles.utils.TestData.DEVELOPER_ROLE;
 import static java.lang.String.format;

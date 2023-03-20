@@ -1,4 +1,4 @@
-package com.ecore.roles;
+package com.ecore.roles.utils;
 
 public class MessageUtil {
 

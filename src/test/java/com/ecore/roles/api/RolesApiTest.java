@@ -17,6 +17,11 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import static com.ecore.roles.utils.MessageUtil.BAD_REQUEST;
+import static com.ecore.roles.utils.MessageUtil.NOT_FOUND;
+import static com.ecore.roles.utils.MessageUtil.S_ALREADY_EXISTS;
+import static com.ecore.roles.utils.MessageUtil.S_NOT_FOUND;
+import static com.ecore.roles.utils.MessageUtil.S_S_NOT_FOUND;
 import static com.ecore.roles.utils.MockUtils.mockGetTeamById;
 import static com.ecore.roles.utils.RestAssuredHelper.createMembership;
 import static com.ecore.roles.utils.RestAssuredHelper.createRole;
@@ -36,13 +41,7 @@ import static com.ecore.roles.utils.TestData.UUID_1;
 import static io.restassured.RestAssured.when;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
-import static com.ecore.roles.MessageUtil.S_ALREADY_EXISTS;
-import static com.ecore.roles.MessageUtil.S_S_NOT_FOUND;
-import static com.ecore.roles.MessageUtil.S_NOT_FOUND;
-import static com.ecore.roles.MessageUtil.BAD_REQUEST;
-import static com.ecore.roles.MessageUtil.NOT_FOUND;;
+import static org.hamcrest.Matchers.equalTo;;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RolesApiTest {

@@ -2,10 +2,9 @@ package com.ecore.roles.exception;
 
 import java.util.UUID;
 
+import static com.ecore.roles.utils.MessageUtil.S_NOT_FOUND;
+import static com.ecore.roles.utils.MessageUtil.S_S_NOT_FOUND;
 import static java.lang.String.format;
-
-import static com.ecore.roles.MessageUtil.S_NOT_FOUND;
-import static com.ecore.roles.MessageUtil.S_S_NOT_FOUND;
 
 public class ResourceNotFoundException extends RuntimeException {
 

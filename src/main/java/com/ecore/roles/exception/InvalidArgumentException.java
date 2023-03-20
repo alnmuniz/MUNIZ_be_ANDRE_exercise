@@ -1,7 +1,7 @@
 package com.ecore.roles.exception;
 
+import static com.ecore.roles.utils.MessageUtil.INVALID_S_OBJECT;
 import static java.lang.String.format;
-import static com.ecore.roles.MessageUtil.INVALID_S_OBJECT;
 
 public class InvalidArgumentException extends RuntimeException {
 

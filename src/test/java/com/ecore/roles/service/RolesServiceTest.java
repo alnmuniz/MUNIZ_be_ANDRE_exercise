@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static java.lang.String.format;
-
-import static com.ecore.roles.MessageUtil.S_NOT_FOUND;
+import static com.ecore.roles.utils.MessageUtil.S_NOT_FOUND;
 import static com.ecore.roles.utils.TestData.DEVELOPER_ROLE;
 import static com.ecore.roles.utils.TestData.UUID_1;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+import static com.ecore.roles.utils.MessageUtil.PROV_USR_DOESNT_BELONG_PROV_TEAM;
 import static java.util.Optional.ofNullable;
-import static com.ecore.roles.MessageUtil.PROV_USR_DOESNT_BELONG_PROV_TEAM;
 
 @Log4j2
 @Service
