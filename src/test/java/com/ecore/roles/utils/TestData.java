@@ -27,6 +27,9 @@ public class TestData {
     public static final UUID DEFAULT_MEMBERSHIP_UUID =
             UUID.fromString("98de61a0-b9e3-11ec-8422-0242ac120002");
 
+    public static final UUID GIANNI_TESTER_MEMBERSHIP_UUID =
+            UUID.fromString("d4a64711-3a00-4537-8ee6-3cb538a5d98f");
+
     public static Role DEVELOPER_ROLE() {
         return Role.builder()
                 .id(DEVELOPER_ROLE_UUID)
@@ -91,6 +94,15 @@ public class TestData {
                 .build();
     }
 
+    public static Membership GIANNI_TESTER_MEMBERSHIP() {
+        return Membership.builder()
+                .id(GIANNI_TESTER_MEMBERSHIP_UUID)
+                .role(TESTER_ROLE())
+                .userId(GIANNI_USER_UUID)
+                .teamId(ORDINARY_CORAL_LYNX_TEAM_UUID)
+                .build();
+    }
+
     public static Membership INVALID_MEMBERSHIP() {
         return Membership.builder()
                 .id(DEFAULT_MEMBERSHIP_UUID)
@@ -98,6 +110,18 @@ public class TestData {
                 .userId(UUID_4)
                 .teamId(ORDINARY_CORAL_LYNX_TEAM_UUID)
                 .build();
+    }
+
+    public static Membership NEW_MEMBERSHIP(boolean buildWithId) {
+        Membership m = Membership.builder()
+                .role(DEVELOPER_ROLE())
+                .userId(UUID_3)
+                .teamId(ORDINARY_CORAL_LYNX_TEAM_UUID)
+                .build();
+        if (buildWithId) {
+            m.setId(DEFAULT_MEMBERSHIP_UUID);
+        }
+        return m;
     }
 
 }

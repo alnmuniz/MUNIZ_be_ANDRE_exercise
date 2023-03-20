@@ -17,7 +17,7 @@ import java.util.UUID;
 @Setter
 @Builder
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"team_id", "user_id"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"role_id", "team_id", "user_id"}))
 public class Membership {
 
     @Id
