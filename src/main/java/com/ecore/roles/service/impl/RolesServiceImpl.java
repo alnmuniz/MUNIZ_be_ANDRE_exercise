@@ -23,8 +23,6 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class RolesServiceImpl implements RolesService {
 
-    public static final String DEFAULT_ROLE = "Developer";
-
     private final RoleRepository roleRepository;
     private final MembershipRepository membershipRepository;
 
@@ -60,7 +58,7 @@ public class RolesServiceImpl implements RolesService {
         List<Membership> memberships = membershipRepository.findByUserIdAndTeamId(userId, teamId);
 
         if (memberships.isEmpty()) {
-            throw new ResourceNotFoundException(Role.class, null);
+            throw new ResourceNotFoundException(Role.class);
         }
 
         ArrayList<RoleDto> roles = new ArrayList<>();

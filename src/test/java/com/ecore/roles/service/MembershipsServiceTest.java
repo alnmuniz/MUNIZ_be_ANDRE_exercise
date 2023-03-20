@@ -1,12 +1,19 @@
 package com.ecore.roles.service;
 
-import com.ecore.roles.exception.InvalidArgumentException;
-import com.ecore.roles.exception.ResourceExistsException;
-import com.ecore.roles.model.Membership;
-import com.ecore.roles.repository.MembershipRepository;
-import com.ecore.roles.repository.RoleRepository;
-import com.ecore.roles.service.impl.MembershipsServiceImpl;
-import com.ecore.roles.utils.TestData;
+import static com.ecore.roles.MessageUtil.S_ALREADY_EXISTS;
+import static com.ecore.roles.MessageUtil.INVALID_S_OBJECT;
+import static com.ecore.roles.utils.TestData.DEFAULT_MEMBERSHIP;
+import static com.ecore.roles.utils.TestData.DEVELOPER_ROLE;
+import static java.lang.String.format;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,17 +21,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
-import static com.ecore.roles.utils.TestData.DEFAULT_MEMBERSHIP;
-import static com.ecore.roles.utils.TestData.DEVELOPER_ROLE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
+import com.ecore.roles.exception.InvalidArgumentException;
+import com.ecore.roles.exception.ResourceExistsException;
+import com.ecore.roles.model.Membership;
+import com.ecore.roles.model.Role;
+import com.ecore.roles.repository.MembershipRepository;
+import com.ecore.roles.repository.RoleRepository;
+import com.ecore.roles.service.impl.MembershipsServiceImpl;
+import com.ecore.roles.utils.TestData;
 
 @ExtendWith(MockitoExtension.class)
 class MembershipsServiceTest {
@@ -83,7 +87,7 @@ class MembershipsServiceTest {
         ResourceExistsException exception = assertThrows(ResourceExistsException.class,
                 () -> membershipsService.assignRoleToMembership(expectedMembership));
 
-        assertEquals("Membership already exists", exception.getMessage());
+        assertEquals(format(S_ALREADY_EXISTS, Membership.class.getSimpleName()), exception.getMessage());
         verify(roleRepository, times(0)).getById(any());
         verify(usersService, times(0)).getUser(any());
         verify(teamsService, times(0)).getTeam(any());
@@ -97,7 +101,7 @@ class MembershipsServiceTest {
         InvalidArgumentException exception = assertThrows(InvalidArgumentException.class,
                 () -> membershipsService.assignRoleToMembership(expectedMembership));
 
-        assertEquals("Invalid 'Role' object", exception.getMessage());
+        assertEquals(format(INVALID_S_OBJECT, Role.class.getSimpleName()), exception.getMessage());
         verify(membershipRepository, times(0)).findByUserIdAndTeamId(any(), any());
         verify(roleRepository, times(0)).getById(any());
         verify(usersService, times(0)).getUser(any());

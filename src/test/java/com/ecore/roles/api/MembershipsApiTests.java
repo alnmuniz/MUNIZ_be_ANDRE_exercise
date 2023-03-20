@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.core.env.Environment;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,6 +26,12 @@ import com.ecore.roles.repository.MembershipRepository;
 import com.ecore.roles.utils.RestAssuredHelper;
 import com.ecore.roles.web.dto.MembershipDto;
 
+import static com.ecore.roles.MessageUtil.S_ALREADY_EXISTS;
+import static com.ecore.roles.MessageUtil.S_S_NOT_FOUND;
+import static com.ecore.roles.MessageUtil.INVALID_S_OBJECT;
+import static com.ecore.roles.MessageUtil.PROV_USR_DOESNT_BELONG_PROV_TEAM;
+import static com.ecore.roles.MessageUtil.BAD_REQUEST;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class MembershipsApiTests {
 
@@ -32,6 +39,9 @@ public class MembershipsApiTests {
     private final RestTemplate restTemplate;
 
     private MockRestServiceServer mockServer;
+
+    @Autowired
+    private Environment env;
 
     @LocalServerPort
     private int port;
@@ -62,7 +72,7 @@ public class MembershipsApiTests {
     @Test
     void shouldFailToCreateRoleMembershipWhenBodyIsNull() {
         createMembership(null)
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Bad Request");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, BAD_REQUEST);
     }
 
     @Test
@@ -71,7 +81,7 @@ public class MembershipsApiTests {
         expectedMembership.setRole(null);
 
         createMembership(expectedMembership)
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Bad Request");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, BAD_REQUEST);
     }
 
     @Test
@@ -80,7 +90,7 @@ public class MembershipsApiTests {
         expectedMembership.setRole(Role.builder().build());
 
         createMembership(expectedMembership)
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Bad Request");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, BAD_REQUEST);
     }
 
     @Test
@@ -89,7 +99,7 @@ public class MembershipsApiTests {
         expectedMembership.setUserId(null);
 
         createMembership(expectedMembership)
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Bad Request");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, BAD_REQUEST);
     }
 
     @Test
@@ -98,7 +108,7 @@ public class MembershipsApiTests {
         expectedMembership.setTeamId(null);
 
         createMembership(expectedMembership)
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Bad Request");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, BAD_REQUEST);
     }
 
     @Test
@@ -106,7 +116,8 @@ public class MembershipsApiTests {
         createDefaultMembership();
 
         createMembership(DEFAULT_MEMBERSHIP())
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Membership already exists");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST,
+                        format(S_ALREADY_EXISTS, Membership.class.getSimpleName()));
     }
 
     @Test
@@ -115,13 +126,14 @@ public class MembershipsApiTests {
         expectedMembership.setRole(Role.builder().id(UUID_1).build());
 
         createMembership(expectedMembership)
-                .validate(RestAssuredHelper.HTTP_NOT_FOUND, format("Role %s not found", UUID_1));
+                .validate(RestAssuredHelper.HTTP_NOT_FOUND,
+                        format(S_S_NOT_FOUND, Role.class.getSimpleName(), UUID_1));
     }
 
     @Test
     void shouldFailToCreateRoleMembershipWhenTeamDoesNotExist() {
         Membership expectedMembership = DEFAULT_MEMBERSHIP();
-        mockGetTeamById(mockServer, expectedMembership.getTeamId(), null);
+        mockGetTeamById(mockServer, expectedMembership.getTeamId(), null, env);
 
         createMembership(expectedMembership)
                 .validate(RestAssuredHelper.HTTP_NOT_FOUND,
@@ -131,11 +143,12 @@ public class MembershipsApiTests {
     @Test
     void shouldFailToAssignRoleWhenMembershipIsInvalid() {
         Membership expectedMembership = INVALID_MEMBERSHIP();
-        mockGetTeamById(mockServer, expectedMembership.getTeamId(), ORDINARY_CORAL_LYNX_TEAM());
+        mockGetTeamById(mockServer, expectedMembership.getTeamId(), ORDINARY_CORAL_LYNX_TEAM(), env);
 
         createMembership(expectedMembership)
                 .validate(RestAssuredHelper.HTTP_BAD_REQUEST,
-                        "Invalid 'Membership' object. The provided user doesn't belong to the provided team.");
+                        format(INVALID_S_OBJECT, Membership.class.getSimpleName()) + ". "
+                                + PROV_USR_DOESNT_BELONG_PROV_TEAM);
     }
 
     @Test
@@ -164,12 +177,12 @@ public class MembershipsApiTests {
     @Test
     void shouldFailToGetAllMembershipsWhenRoleIdIsNull() {
         getMemberships(null)
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Bad Request");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, BAD_REQUEST);
     }
 
     private MembershipDto createDefaultMembership() {
         Membership expectedMembership = DEFAULT_MEMBERSHIP();
-        mockGetTeamById(mockServer, expectedMembership.getTeamId(), ORDINARY_CORAL_LYNX_TEAM());
+        mockGetTeamById(mockServer, expectedMembership.getTeamId(), ORDINARY_CORAL_LYNX_TEAM(), env);
 
         return createMembership(expectedMembership)
                 .statusCode(RestAssuredHelper.HTTP_CREATED)

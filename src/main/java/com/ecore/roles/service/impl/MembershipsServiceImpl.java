@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.Optional.ofNullable;
+import static com.ecore.roles.MessageUtil.PROV_USR_DOESNT_BELONG_PROV_TEAM;
 
 @Log4j2
 @Service
@@ -53,7 +54,7 @@ public class MembershipsServiceImpl implements MembershipsService {
 
         if (!teamsService.isMemberOfTeam(m.getTeamId(), m.getUserId())) {
             throw new InvalidArgumentException(Membership.class,
-                    "The provided user doesn't belong to the provided team.");
+                    PROV_USR_DOESNT_BELONG_PROV_TEAM);
         }
 
         return membershipRepository.save(m);

@@ -4,6 +4,8 @@ import com.ecore.roles.client.model.Team;
 import com.ecore.roles.client.model.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,9 +20,13 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 public class MockUtils {
 
-    public static void mockGetUserById(MockRestServiceServer mockServer, UUID userId, User user) {
+    public static void mockGetUserById(
+            MockRestServiceServer mockServer,
+            UUID userId,
+            User user,
+            Environment env) {
         try {
-            mockServer.expect(requestTo("http://test.com/users/" + userId))
+            mockServer.expect(requestTo(env.getProperty("clients.users-api-host") + "/users/" + userId))
                     .andExpect(method(HttpMethod.GET))
                     .andRespond(
                             withStatus(HttpStatus.OK)
@@ -31,9 +37,15 @@ public class MockUtils {
         }
     }
 
-    public static void mockGetTeamById(MockRestServiceServer mockServer, UUID teamId, Team team) {
+    public static void mockGetTeamById(
+            MockRestServiceServer mockServer,
+            UUID teamId,
+            Team team,
+            Environment env) {
         try {
-            mockServer.expect(ExpectedCount.manyTimes(), requestTo("http://test.com/teams/" + teamId))
+            mockServer.expect(
+                    ExpectedCount.manyTimes(),
+                    requestTo(env.getProperty("clients.teams-api-host") + "/" + teamId))
                     .andExpect(method(HttpMethod.GET))
                     .andRespond(
                             withStatus(HttpStatus.OK)

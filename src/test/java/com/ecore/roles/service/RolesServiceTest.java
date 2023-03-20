@@ -18,10 +18,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import static java.lang.String.format;
 
+import static com.ecore.roles.MessageUtil.S_NOT_FOUND;
 import static com.ecore.roles.utils.TestData.DEVELOPER_ROLE;
 import static com.ecore.roles.utils.TestData.UUID_1;
-import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -137,6 +138,6 @@ class RolesServiceTest {
                         TestData.GIANNI_USER_UUID,
                         TestData.ORDINARY_CORAL_LYNX_TEAM_UUID));
 
-        assertEquals("Role null not found", exception.getMessage());
+        assertEquals(format(S_NOT_FOUND, Role.class.getSimpleName()), exception.getMessage());
     }
 }

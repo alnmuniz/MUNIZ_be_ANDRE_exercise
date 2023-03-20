@@ -1,16 +1,15 @@
 package com.ecore.roles.exception;
 
 import static java.lang.String.format;
-
-import com.ecore.roles.model.Membership;
+import static com.ecore.roles.MessageUtil.INVALID_S_OBJECT;
 
 public class InvalidArgumentException extends RuntimeException {
 
     public <T> InvalidArgumentException(Class<T> resource) {
-        super(format("Invalid '%s' object", resource.getSimpleName()));
+        super(format(INVALID_S_OBJECT, resource.getSimpleName()));
     }
 
-    public InvalidArgumentException(Class<Membership> resource, String additionalInfo) {
-        super(format("Invalid '%s' object. " + additionalInfo, resource.getSimpleName()));
+    public <T> InvalidArgumentException(Class<T> resource, String additionalInfo) {
+        super(format(INVALID_S_OBJECT + ". " + additionalInfo, resource.getSimpleName()));
     }
 }

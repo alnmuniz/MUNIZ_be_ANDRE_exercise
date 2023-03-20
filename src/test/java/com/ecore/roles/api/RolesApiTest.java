@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.core.env.Environment;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -37,6 +38,12 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import static com.ecore.roles.MessageUtil.S_ALREADY_EXISTS;
+import static com.ecore.roles.MessageUtil.S_S_NOT_FOUND;
+import static com.ecore.roles.MessageUtil.S_NOT_FOUND;
+import static com.ecore.roles.MessageUtil.BAD_REQUEST;
+import static com.ecore.roles.MessageUtil.NOT_FOUND;;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RolesApiTest {
 
@@ -44,6 +51,9 @@ public class RolesApiTest {
     private final RoleRepository roleRepository;
 
     private MockRestServiceServer mockServer;
+
+    @Autowired
+    private Environment env;
 
     @LocalServerPort
     private int port;
@@ -67,7 +77,7 @@ public class RolesApiTest {
         sendRequest(when()
                 .get("/v1/role")
                 .then())
-                        .validate(RestAssuredHelper.HTTP_NOT_FOUND, "Not Found");
+                        .validate(RestAssuredHelper.HTTP_NOT_FOUND, NOT_FOUND);
     }
 
     @Test
@@ -84,25 +94,26 @@ public class RolesApiTest {
     @Test
     void shouldFailToCreateNewRoleWhenNull() {
         createRole(null)
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Bad Request");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, BAD_REQUEST);
     }
 
     @Test
     void shouldFailToCreateNewRoleWhenMissingName() {
         createRole(Role.builder().build())
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Bad Request");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, BAD_REQUEST);
     }
 
     @Test
     void shouldFailToCreateNewRoleWhenBlankName() {
         createRole(Role.builder().name("").build())
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Bad Request");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, BAD_REQUEST);
     }
 
     @Test
     void shouldFailToCreateNewRoleWhenNameAlreadyExists() {
         createRole(DEVELOPER_ROLE())
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Role already exists");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST,
+                        format(S_ALREADY_EXISTS, Role.class.getSimpleName()));
     }
 
     @Test
@@ -128,13 +139,14 @@ public class RolesApiTest {
     @Test
     void shouldFailToGetRoleById() {
         getRole(UUID_1)
-                .validate(RestAssuredHelper.HTTP_NOT_FOUND, format("Role %s not found", UUID_1));
+                .validate(RestAssuredHelper.HTTP_NOT_FOUND,
+                        format(S_S_NOT_FOUND, Role.class.getSimpleName(), UUID_1));
     }
 
     @Test
     void shouldGetRoleByUserIdAndTeamId() {
         Membership expectedMembership = DEFAULT_MEMBERSHIP();
-        mockGetTeamById(mockServer, ORDINARY_CORAL_LYNX_TEAM_UUID, ORDINARY_CORAL_LYNX_TEAM());
+        mockGetTeamById(mockServer, ORDINARY_CORAL_LYNX_TEAM_UUID, ORDINARY_CORAL_LYNX_TEAM(), env);
         createMembership(expectedMembership)
                 .statusCode(RestAssuredHelper.HTTP_CREATED);
 
@@ -150,7 +162,7 @@ public class RolesApiTest {
     void shouldGetMoreThanOneRoleByUserIdAndTeamId() {
         Membership expectedMembershipGianniTester = GIANNI_TESTER_MEMBERSHIP();
 
-        mockGetTeamById(mockServer, ORDINARY_CORAL_LYNX_TEAM_UUID, ORDINARY_CORAL_LYNX_TEAM());
+        mockGetTeamById(mockServer, ORDINARY_CORAL_LYNX_TEAM_UUID, ORDINARY_CORAL_LYNX_TEAM(), env);
 
         createMembership(expectedMembershipGianniTester)
                 .statusCode(RestAssuredHelper.HTTP_CREATED);
@@ -172,19 +184,20 @@ public class RolesApiTest {
     @Test
     void shouldFailToGetRoleByUserIdAndTeamIdWhenMissingUserId() {
         getRole(null, ORDINARY_CORAL_LYNX_TEAM_UUID)
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Bad Request");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, BAD_REQUEST);
     }
 
     @Test
     void shouldFailToGetRoleByUserIdAndTeamIdWhenMissingTeamId() {
         getRole(GIANNI_USER_UUID, null)
-                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, "Bad Request");
+                .validate(RestAssuredHelper.HTTP_BAD_REQUEST, BAD_REQUEST);
     }
 
     @Test
     void shouldFailToGetRoleByUserIdAndTeamIdWhenItDoesNotExist() {
-        mockGetTeamById(mockServer, UUID_1, null);
+        mockGetTeamById(mockServer, UUID_1, null, env);
         getRole(GIANNI_USER_UUID, UUID_1)
-                .validate(RestAssuredHelper.HTTP_NOT_FOUND, "Role null not found");
+                .validate(RestAssuredHelper.HTTP_NOT_FOUND,
+                        format(S_NOT_FOUND, Role.class.getSimpleName()));
     }
 }
