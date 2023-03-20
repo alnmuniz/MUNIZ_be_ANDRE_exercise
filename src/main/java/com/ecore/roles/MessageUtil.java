@@ -2,6 +2,10 @@ package com.ecore.roles;
 
 public class MessageUtil {
 
+    private MessageUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static final String INVALID_S_OBJECT = "Invalid '%s' object";
     public static final String S_ALREADY_EXISTS = "%s already exists";
     public static final String S_NOT_FOUND = "%s not found";

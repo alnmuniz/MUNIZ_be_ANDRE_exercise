@@ -45,7 +45,7 @@ import static com.ecore.roles.MessageUtil.BAD_REQUEST;
 import static com.ecore.roles.MessageUtil.NOT_FOUND;;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RolesApiTest {
+class RolesApiTest {
 
     private final RestTemplate restTemplate;
     private final RoleRepository roleRepository;
@@ -121,10 +121,11 @@ public class RolesApiTest {
         RoleDto[] roles = getRoles()
                 .extract().as(RoleDto[].class);
 
-        assertThat(roles.length).isGreaterThanOrEqualTo(3);
-        assertThat(roles).contains(RoleDto.fromModel(DEVELOPER_ROLE()));
-        assertThat(roles).contains(RoleDto.fromModel(PRODUCT_OWNER_ROLE()));
-        assertThat(roles).contains(RoleDto.fromModel(TESTER_ROLE()));
+        assertThat(roles)
+                .hasSizeGreaterThanOrEqualTo(3)
+                .contains(RoleDto.fromModel(DEVELOPER_ROLE()))
+                .contains(RoleDto.fromModel(PRODUCT_OWNER_ROLE()))
+                .contains(RoleDto.fromModel(TESTER_ROLE()));
     }
 
     @Test

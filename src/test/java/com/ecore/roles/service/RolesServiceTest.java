@@ -26,6 +26,7 @@ import static com.ecore.roles.utils.TestData.UUID_1;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,13 +56,13 @@ class RolesServiceTest {
     }
 
     @Test
-    public void shouldFailToCreateRoleWhenRoleIsNull() {
+    void shouldFailToCreateRoleWhenRoleIsNull() {
         assertThrows(NullPointerException.class,
                 () -> rolesService.createRole(null));
     }
 
     @Test
-    public void shouldReturnRoleWhenRoleIdExists() {
+    void shouldReturnRoleWhenRoleIdExists() {
         Role developerRole = DEVELOPER_ROLE();
         when(roleRepository.findById(developerRole.getId())).thenReturn(Optional.of(developerRole));
 
@@ -72,7 +73,7 @@ class RolesServiceTest {
     }
 
     @Test
-    public void shouldFailToGetRoleWhenRoleIdDoesNotExist() {
+    void shouldFailToGetRoleWhenRoleIdDoesNotExist() {
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                 () -> rolesService.getRole(UUID_1));
 
@@ -80,7 +81,7 @@ class RolesServiceTest {
     }
 
     @Test
-    public void shouldGetRoleByUserIdAndTeamIdWhenExists() {
+    void shouldGetRoleByUserIdAndTeamIdWhenExists() {
         Membership gianniDeveloper = TestData.DEFAULT_MEMBERSHIP();
         List<Membership> memberships = new ArrayList<Membership>();
         memberships.add(gianniDeveloper);
@@ -100,7 +101,7 @@ class RolesServiceTest {
     }
 
     @Test
-    public void shouldGetMoreThanOneRoleByUserIdAndTeamIdWhenExists() {
+    void shouldGetMoreThanOneRoleByUserIdAndTeamIdWhenExists() {
         Membership gianniDeveloper = TestData.DEFAULT_MEMBERSHIP();
         Membership gianniTester = TestData.GIANNI_TESTER_MEMBERSHIP();
         List<Membership> memberships = new ArrayList<Membership>();
@@ -118,13 +119,13 @@ class RolesServiceTest {
                         gianniDeveloper.getTeamId());
 
         assertNotNull(returnedRoles);
-        assertEquals(returnedRoles.size(), 2);
+        assertThat(returnedRoles).hasSize(2);
         assertEquals(returnedRoles.get(0).getName(), gianniDeveloper.getRole().getName());
         assertEquals(returnedRoles.get(1).getName(), gianniTester.getRole().getName());
     }
 
     @Test
-    public void shouldThrowExceptionWhenUserDoesNotHaveRoleInATeam() {
+    void shouldThrowExceptionWhenUserDoesNotHaveRoleInATeam() {
         List<Membership> memberships = new ArrayList<Membership>();
 
         when(membershipRepository.findByUserIdAndTeamId(
