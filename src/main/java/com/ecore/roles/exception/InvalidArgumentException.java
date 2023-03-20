@@ -10,6 +10,10 @@ public class InvalidArgumentException extends RuntimeException {
     }
 
     public <T> InvalidArgumentException(Class<T> resource, String additionalInfo) {
-        super(format(INVALID_S_OBJECT + ". " + additionalInfo, resource.getSimpleName()));
+        super(new StringBuilder()
+                .append(format(INVALID_S_OBJECT, resource.getSimpleName()))
+                .append(". ")
+                .append(additionalInfo)
+                .toString());
     }
 }

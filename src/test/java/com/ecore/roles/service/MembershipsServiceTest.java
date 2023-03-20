@@ -45,7 +45,7 @@ class MembershipsServiceTest {
     private TeamsService teamsService;
 
     @Test
-    public void shouldCreateMembership() {
+    void shouldCreateMembership() {
         Membership newMembershipToCreate = TestData.NEW_MEMBERSHIP(false);
         Membership expectedMembership = TestData.NEW_MEMBERSHIP(true);
 
@@ -70,13 +70,13 @@ class MembershipsServiceTest {
     }
 
     @Test
-    public void shouldFailToCreateMembershipWhenMembershipsIsNull() {
+    void shouldFailToCreateMembershipWhenMembershipsIsNull() {
         assertThrows(NullPointerException.class,
                 () -> membershipsService.assignRoleToMembership(null));
     }
 
     @Test
-    public void shouldFailToCreateMembershipWhenItExists() {
+    void shouldFailToCreateMembershipWhenItExists() {
         Membership expectedMembership = DEFAULT_MEMBERSHIP();
         when(membershipRepository.findByRoleIdAndUserIdAndTeamId(
                 expectedMembership.getRole().getId(),
@@ -94,7 +94,7 @@ class MembershipsServiceTest {
     }
 
     @Test
-    public void shouldFailToCreateMembershipWhenItHasInvalidRole() {
+    void shouldFailToCreateMembershipWhenItHasInvalidRole() {
         Membership expectedMembership = DEFAULT_MEMBERSHIP();
         expectedMembership.setRole(null);
 
@@ -109,7 +109,7 @@ class MembershipsServiceTest {
     }
 
     @Test
-    public void shouldFailToGetMembershipsWhenRoleIdIsNull() {
+    void shouldFailToGetMembershipsWhenRoleIdIsNull() {
         assertThrows(NullPointerException.class,
                 () -> membershipsService.getMemberships(null));
     }

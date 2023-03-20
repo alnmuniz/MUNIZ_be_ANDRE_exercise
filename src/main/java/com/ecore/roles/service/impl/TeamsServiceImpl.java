@@ -36,10 +36,6 @@ public class TeamsServiceImpl implements TeamsService {
         Team team = ofNullable(getTeam(teamId))
                 .orElseThrow(() -> new ResourceNotFoundException(Team.class, teamId));
 
-        if (team.getTeamLeadId().equals(userId) || team.getTeamMemberIds().contains(userId)) {
-            return true;
-        }
-
-        return false;
+        return (team.getTeamLeadId().equals(userId) || team.getTeamMemberIds().contains(userId));
     }
 }

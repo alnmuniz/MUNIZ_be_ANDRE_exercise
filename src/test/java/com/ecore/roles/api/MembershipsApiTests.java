@@ -33,7 +33,7 @@ import static com.ecore.roles.MessageUtil.PROV_USR_DOESNT_BELONG_PROV_TEAM;
 import static com.ecore.roles.MessageUtil.BAD_REQUEST;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class MembershipsApiTests {
+class MembershipsApiTests {
 
     private final MembershipRepository membershipRepository;
     private final RestTemplate restTemplate;
@@ -160,7 +160,7 @@ public class MembershipsApiTests {
                 .statusCode(RestAssuredHelper.HTTP_OK)
                 .extract().as(MembershipDto[].class);
 
-        assertThat(actualMemberships.length).isEqualTo(1);
+        assertThat(actualMemberships).hasSize(1);
         assertThat(actualMemberships[0].getId()).isNotNull();
         assertThat(actualMemberships[0]).isEqualTo(MembershipDto.fromModel(expectedMembership));
     }
@@ -171,7 +171,7 @@ public class MembershipsApiTests {
                 .statusCode(RestAssuredHelper.HTTP_OK)
                 .extract().as(MembershipDto[].class);
 
-        assertThat(actualMemberships.length).isEqualTo(0);
+        assertThat(actualMemberships).isEmpty();
     }
 
     @Test
